@@ -17,7 +17,7 @@ export function TopStocksTable() {
       {topStocks.map((stock, index) => (
         <div
           key={stock.ticker}
-          className="flex items-center justify-between rounded-lg border bg-white p-3 hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-between border-b bg-white p-3 hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
