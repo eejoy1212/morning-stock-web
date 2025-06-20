@@ -1,14 +1,23 @@
 import axiosInstance from "@/app/lib/base"
-import { Stock } from "../stock/api";
+import { Stock, StockInfo } from "../stock/api";
 
 
 export interface CreateSectorPayload {
   name: string;
+  stocks?: StockInfo[]; // 주식의 ticker 배열
 }
 
 export async function createSector(payload: CreateSectorPayload): Promise<any> {
 
   const response = await axiosInstance.post("/sector", payload, {
+
+  });
+
+  return response.data;
+}
+export async function createSectorFull(payload: CreateSectorPayload): Promise<any> {
+
+  const response = await axiosInstance.post("/sector/full", payload, {
 
   });
 

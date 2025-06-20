@@ -33,12 +33,15 @@ const stocks=["#삼성전자","#하이브","#구글코리아","#SM엔터테인�
 console.log(visibleArticles)
   return (
     <Card className="border-none gap-[8px] flex flex-col">
-            <CardTitle className="text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px] ">
-                            <span>주요 뉴스</span>
+            <CardTitle className="text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
+                            <span className="cursor-pointer">주요 뉴스</span>
                             {/* <Button size={"icon"} className="bg-transparent hover:bg-transparent"> */}
                             <ChevronRight className="text-black cursor-pointer" />
                             {/* </Button> */}
-                          </CardTitle>  <div className="relative w-full">
+                          </CardTitle>  
+                          
+                          
+                          <div className="relative w-full">
                             <ul className="flex flex-row">
                               {stocks.map(s=><li key={s}>
                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-[#2664EB]">

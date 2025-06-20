@@ -52,7 +52,7 @@ export function CustomSectorManager({ customSectors, setCustomSectors ,fetchData
 const [searchResults, setSearchResults] = useState<{ name: string; code: string }[]>([])
 const [token,setToken]=useState("")
 const [isCreating, setIsCreating] = useState(false)
-const [newSectorName, setNewSectorName] = useState("")
+
 const [selectedStocks, setSelectedStocks] = useState<string[]>([])
 useEffect(()=>{
   const res=    localStorage.getItem("jwt_token")??""
@@ -164,8 +164,7 @@ const defaultData = [
     stocks: [
       { name: "LG에너지솔루션", code: "373220" },
       { name: "삼성SDI", code: "006400" },
-           { name: "삼성SDI", code: "006400" },
-      { name: "삼성SDI", code: "006400" },
+
      
     ],
   },
@@ -342,28 +341,14 @@ const [page, setPage] = useState(1)
 const itemsPerPage = 10
 const totalCount = defaultData.length
 const paginatedData = defaultData.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-const availableStocks = [
-  { name: "LG에너지솔루션", ticker: "373220", sector: "배터리" },
-  { name: "삼성SDI", ticker: "006400", sector: "배터리" },
-  { name: "NAVER", ticker: "035420", sector: "IT" },
-  // 필요시 추가
-]
+// const availableStocks = [
+//   { name: "LG에너지솔루션", ticker: "373220", sector: "배터리" },
+//   { name: "삼성SDI", ticker: "006400", sector: "배터리" },
+//   { name: "NAVER", ticker: "035420", sector: "IT" },
+//   // 필요시 추가
+// ]
 
-const handleStockSelection = (ticker: string) => {
-  setSelectedStocks((prev) =>
-    prev.includes(ticker) ? prev.filter((t) => t !== ticker) : [...prev, ticker]
-  )
-}
 
-const handleCreateSector = () => {
-  // 등록 로직 구현
-  console.log("새 섹터 이름:", newSectorName)
-  console.log("선택한 주식:", selectedStocks)
-  alert("섹터가 생성되었습니다!")
-  setIsCreating(false)
-  setNewSectorName("")
-  setSelectedStocks([])
-}
 if(!token){
   return <Card className="border shadow-md bg-gray-50">
         <CardContent className="flex flex-col items-center justify-center py-12 lg:py-16">
@@ -497,7 +482,7 @@ if (customSectors.length === 0) {
 //       ))}
 //     </div>
 <Card  className="border-none">
-<SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating} availableStocks={availableStocks} handleCreateSector={handleCreateSector} newSectorName={newSectorName} setNewSectorName={setNewSectorName} selectedStocks={selectedStocks}  handleStockSelection={handleStockSelection}/>
+<SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating}  />
 
    <div className="mt-[16px]">
       <StickyTable defaultColumns={defaultColumns} defaultData={paginatedData}/>

@@ -17,7 +17,11 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/app/components/ui/command"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { fetchStockSearch, StockInfo } from "@/app/domain/stock/api"
+import { useDebounce } from 'use-debounce'; 
+import { se } from "date-fns/locale"
+import { createSector, createSectorFull } from "@/app/domain/sector/api"
 
 interface Stock {
   name: string
@@ -28,25 +32,50 @@ interface Stock {
 interface SectorDialogProps {
   isCreating: boolean
   setIsCreating: (val: boolean) => void
-  availableStocks: Stock[]
-  handleCreateSector: () => void
-  newSectorName: string
-  setNewSectorName: (val: string) => void
-  selectedStocks: string[]
-  handleStockSelection: (ticker: string) => void
+
 }
 
 export default function SectorDialog({
   isCreating,
   setIsCreating,
-  availableStocks,
-  handleCreateSector,
-  newSectorName,
-  setNewSectorName,
-  selectedStocks,
-  handleStockSelection,
 }: SectorDialogProps) {
-  const [aaa,setAAA]=useState()
+const [query, setQuery] = useState('');
+const [debouncedQuery] = useDebounce(query, 300);
+const [availableStocks, setAvailableStocks] = useState<StockInfo[]>([]);
+const [selectedStocks, setSelectedStocks] = useState<StockInfo[]>([]);
+const [newSectorName, setNewSectorName] = useState("")
+useEffect(() => {
+  if (!debouncedQuery) return;
+  fetchStockSearch(debouncedQuery).then((res) => {
+    console.log("검색어:", debouncedQuery)
+    console.log("검색 결과:", res)
+    setAvailableStocks(res.stocks); 
+  }); },
+ [debouncedQuery]);
+const handleStockSelection = (ticker: string) => {
+  setSelectedStocks((prev) =>
+    prev.find((stock) => stock.code === ticker)
+      ? prev.filter((stock) => stock.code !== ticker)
+      : [...prev, availableStocks.find((stock) => stock.code === ticker)!]
+  )
+}
+
+const handleCreateSector = async() => {
+  // 등록 로직 구현
+
+  try {
+  const result = await createSectorFull({ name: newSectorName, stocks: selectedStocks });
+    console.log("result", result)
+  console.log("선택한 주식:", selectedStocks)
+  alert("섹터가 생성되었습니다!")
+  setIsCreating(false)
+  setNewSectorName("")
+  setSelectedStocks([])
+} catch (error) {
+  console.error("❌ 섹터 생성 실패:", error);
+}
+}
+
   return (
     <Dialog open={isCreating} onOpenChange={setIsCreating}>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
@@ -90,31 +119,40 @@ export default function SectorDialog({
 
           <div className="space-y-2">
             <Label>주식 선택</Label>
-            <Command className="rounded-lg border shadow-sm">
-              <CommandInput placeholder="회사명 또는 종목코드 검색" />
+            <Command
+              className="rounded-lg border shadow-sm"
+            >
+              <CommandInput
+                placeholder="회사명 또는 종목코드 검색"
+                onValueChange={(query: string) => {
+                 setQuery(query)
+                }}
+              />
               <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
               <div className="max-h-[300px] overflow-y-auto">
                 {availableStocks.length > 0 && (
                   <CommandGroup heading="전체 주식">
                     {availableStocks.map((stock) => (
                       <CommandItem
-                        key={stock.ticker}
-                        value={`${stock.name} ${stock.ticker} ${stock.sector}`}
-                        onSelect={() => handleStockSelection(stock.ticker)}
+                        key={stock.code}
+                        value={`${stock.name} (${stock.code}) `}
+                        onSelect={() => handleStockSelection(stock.code)}
                         className={`flex justify-between items-center ${
-                          selectedStocks.includes(stock.ticker)
+                          selectedStocks.filter((s) => s.code === stock.code)
+                            .length > 0
                             ? "bg-primary/10 border-l-4 border-primary"
                             : ""
                         }`}
                       >
-                        <div>
+                        <div className="flex items-center"  >
                           <div className="font-medium text-sm">{stock.name}</div>
                           <div className="text-xs text-muted-foreground">
-                            {stock.ticker} • {stock.sector}
+                            ({stock.code})
                           </div>
                         </div>
                         <div className="ml-2 h-4 w-4 rounded-sm border flex items-center justify-center">
-                          {selectedStocks.includes(stock.ticker) && (
+                          {   selectedStocks.filter((s) => s.code === stock.code)
+                            .length > 0 && (
                             <div className="h-2 w-2 rounded-sm bg-primary"></div>
                           )}
                         </div>
@@ -129,13 +167,14 @@ export default function SectorDialog({
             {selectedStocks.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {selectedStocks.map((ticker) => {
-                  const stock = availableStocks.find((s) => s.ticker === ticker)
+                  const stock = availableStocks.find((s) => s.code === ticker.code)
+                  console.log("선택된 종목:", ticker)
                   return (
                     <div
-                      key={ticker}
+                      key={ticker.code}
                       className="bg-primary/10 text-primary text-sm font-medium px-2 py-1 rounded-md border"
                     >
-                      {stock?.name} ({ticker})
+                      {ticker?.name} ({ticker.code})
                     </div>
                   )
                 })}
