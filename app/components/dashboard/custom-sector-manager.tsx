@@ -28,10 +28,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 // import { Label } from "@radix-ui/react-label"
 import { Input } from "../ui/input"
 import SectorDialog from "./sector-dialog"
-import { deleteSector, Sector } from "@/app/domain/sector/api"
+import { deleteSector, fetchSectors, Sector } from "@/app/domain/sector/api"
 import { addStockToSector, deleteStock } from "@/app/domain/stock/api"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
+import { set } from "date-fns"
 
 
 interface CustomSector {
@@ -43,17 +44,18 @@ interface CustomSector {
 interface CustomSectorManagerProps {
   customSectors: Sector[]
   setCustomSectors: (sectors: Sector[]) => void
-  fetchData:()=>void
+
 }
 
-export function CustomSectorManager({ customSectors, setCustomSectors ,fetchData}: CustomSectorManagerProps) {
+export function CustomSectorManager({ customSectors, setCustomSectors }: CustomSectorManagerProps) {
   const [selectedCompanies, setSelectedCompanies] = useState<{ [key: string]: string }>({})
   // const { toast } = useToast()
 const [searchResults, setSearchResults] = useState<{ name: string; code: string }[]>([])
 const [token,setToken]=useState("")
 const [isCreating, setIsCreating] = useState(false)
-
+const [totalCount, setTotalCount] = useState(0)
 const [selectedStocks, setSelectedStocks] = useState<string[]>([])
+const [editingSector, setEditingSector] = useState<Sector | null>(null)
 useEffect(()=>{
   const res=    localStorage.getItem("jwt_token")??""
   setToken(res);
@@ -83,7 +85,6 @@ useEffect(()=>{
   alert("종목 추가가 완료되었습니다.")
   setSelectedCompanies({})
 // window.location.reload();
-fetchData()
 
     }
   
@@ -94,193 +95,29 @@ fetchData()
   console.log(res)
   if (res.success) {
     alert("회사가 삭제되었습니다!")
-    fetchData()
   } else {
    alert("회사가 삭제에 실패했습니다!")
   }
   }
 
   const handleDeleteSector = async(sectorId: string) => {
- const res=await deleteSector(sectorId)
+    if (confirm("정말로 이 섹터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+    const res=await deleteSector(sectorId)
  if (res.success) {
   alert("섹터 삭제 성공!")
-  fetchData()
+  fetchSectors(page, itemsPerPage).then((res) => {
+    console.log("fetch sectors after delete", res)
+    setData(res.sectors)
+    setTotalCount(res.total)
+    setPage(res.page)
+  })
  } else {
   alert("섹터 삭제 실패!")
- }
-  }
-// useEffect(() => {
-//     const sectorId = Object.keys(selectedCompanies)[0]
-//     const query = selectedCompanies[sectorId]?.trim()
+ } 
+    }else {
+  return
+  }}
 
-//     if (!query) {
-//       setSearchResults([])
-//       return
-//     }
-
-//     const controller = new AbortController()
-//     fetch(`/api/stocks-search?q=${encodeURIComponent(query)}`, {
-//       signal: controller.signal,
-//     })
-//       .then((res) => res.json())
-//       .then((data) => {
-//         const names = (data.rows ?? []).map((row: string[]) => row[0])
-//         setSearchResults(names)
-//       })
-//       .catch(() => {})
-
-//     return () => controller.abort()
-//   }, [selectedCompanies])
-const fetchSearchResults = useCallback(
-  // debounce((query: string) => 
-  (query: string) => {
-    // if (!query.trim()) {
-    //   setSearchResults([])
-    //   return
-    // }
-
-    fetch(`/api/stocks-search?q=${encodeURIComponent(query.trim())}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const rows = data.rows ?? []
-        setSearchResults(rows)
-      })
-      .catch(() => {})
-  }, 
-  // 300),
-  []
-)
-type Stock = {
-  name: string
-  "2024-06-10": number
-  "2024-06-11": number
-  "2024-06-12": number
-  "2024-06-13": number
-}
-const defaultData = [
-  {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-
-     
-    ],
-  },
-    {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-
-    ],
-  },
-    {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  },
-   {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
- 
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  }, {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  },
-    {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-    ],
-  },
-    {
-    name: "배터리주",
-    stockCount: 5,
-    stocks: [
-      { name: "LG에너지솔루션", code: "373220" },
-      { name: "삼성SDI", code: "006400" },
-     
-    ],
-  },
-]
 
 const defaultColumns: ColumnDef<any>[] = [
   {
@@ -309,20 +146,23 @@ const defaultColumns: ColumnDef<any>[] = [
     },
   },
 
-   {
-  id: "stocks-add",
-  header: "종목 추가",
-  cell: ({ row }) => (
-    <Button  className="">
-      종목 추가
-    </Button>
-  ),
-},
+//    {
+//   id: "stocks-add",
+//   header: "종목 추가",
+//   cell: ({ row }) => (
+//     <Button>
+//       종목 추가
+//     </Button>
+//   ),
+// },
 {
   id: "sector-edit",
   header: "섹터 수정",
   cell: ({ row }) => (
-    <Button  className="bg-gray-700 border-gray-400">
+    <Button  variant={"outline"} className=" border-blue-600 text-blue-600" onClick={() => {
+      setEditingSector(row.original)
+      setIsCreating(true)
+    }}>
       섹터 수정
     </Button>
   ),
@@ -331,23 +171,39 @@ const defaultColumns: ColumnDef<any>[] = [
   id: "sector-delete",
   header: "섹터 삭제",
   cell: ({ row }) => (
-    <Button variant="destructive" className="">
+    <Button variant="destructive" className="" onClick={() => handleDeleteSector(row.original.id)}>
       섹터 삭제
     </Button>
   ),
 },
 ]
 const [page, setPage] = useState(1)
-const itemsPerPage = 10
-const totalCount = defaultData.length
-const paginatedData = defaultData.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+const itemsPerPage = 6
+const [data,setData]=useState<Sector[]>([])
+
 // const availableStocks = [
 //   { name: "LG에너지솔루션", ticker: "373220", sector: "배터리" },
 //   { name: "삼성SDI", ticker: "006400", sector: "배터리" },
 //   { name: "NAVER", ticker: "035420", sector: "IT" },
 //   // 필요시 추가
 // ]
+const getDatas=async()=>{
+  const res=await fetchSectors(page, itemsPerPage)
+  console.log("fetch sectors",res)
+  setData(res.sectors);
+  setTotalCount(res.total)
+  setPage(res.page)
+}
+useEffect(() => {
+getDatas()
+},[page,editingSector,isCreating])
 
+const customData=data.map(d=>{return {
+  id: d.id,
+  name:d.name,
+  stockCount: d.stocks ? d.stocks.length : 0,
+  stocks: d.stocks
+}})
 
 if(!token){
   return <Card className="border shadow-md bg-gray-50">
@@ -482,10 +338,18 @@ if (customSectors.length === 0) {
 //       ))}
 //     </div>
 <Card  className="border-none">
-<SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating}  />
+<SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating} onOpenChange={
+(setOpen: boolean) => {
+    setIsCreating(setOpen)
+    if (!setOpen) {
+      setEditingSector(null)
+    }
+  }
+
+}   editingSector={editingSector}  />
 
    <div className="mt-[16px]">
-      <StickyTable defaultColumns={defaultColumns} defaultData={paginatedData}/>
+      <StickyTable defaultColumns={defaultColumns} defaultData={customData}/>
     </div>
  <Pagination
   totalCount={totalCount}

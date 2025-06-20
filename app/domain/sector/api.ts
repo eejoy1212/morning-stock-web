@@ -33,14 +33,16 @@ export interface Sector {
 
 export interface GetSectorsResponse {
   success: boolean
+  total: number
+  page: number
+  limit: number
   sectors: Sector[]
 }
-export async function fetchSectors(): Promise<GetSectorsResponse> {
-  const token = localStorage.getItem("jwt_token")
+export async function fetchSectors(page:number,limit:number): Promise<GetSectorsResponse> {
 
   const response = await axiosInstance.get<GetSectorsResponse>("/sector", {
-  
-  })
+  params: { page, limit }
+})
 
   return response.data
 }
@@ -94,5 +96,24 @@ export async function fetchMonthlyTopSectors(): Promise<MonthlyTopSector[]> {
   } catch (error) {
     console.error("📉 월간 섹터 상승률 조회 실패:", error)
     return []
+  }
+}
+
+export interface UpdateSectorPayload {
+  name: string;
+  stocks: {
+    name: string;
+    code: string;
+  }[];
+}
+
+
+export async function updateSector(id: string, payload: UpdateSectorPayload): Promise<any> {
+  try {
+    const res = await axiosInstance.put(`/sector/${id}`, payload);
+    return res.data;
+  } catch (err: any) {
+    console.error("섹터 수정 실패:", err.response?.data || err.message);
+    throw err;
   }
 }

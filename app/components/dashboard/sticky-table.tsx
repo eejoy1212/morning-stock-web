@@ -34,7 +34,7 @@ export default function StickyTable({ defaultColumns ,defaultData}: StickyTableP
                 <th
                   key={header.id}
                   className={`px-4 py-2 text-left border-b font-bold text-sm whitespace-nowrap
-                    ${idx === 0 ? "sticky left-0 bg-white z-10 shadow-md" : ""}
+                    ${idx === 0 ? "sticky left-0 bg-gray-100 z-10 shadow-md" : ""}
                   `}
                 >
                   {flexRender(header.column.columnDef.header, header.getContext())}
@@ -50,7 +50,7 @@ export default function StickyTable({ defaultColumns ,defaultData}: StickyTableP
                 <td
                   key={cell.id}
                   className={`px-4 py-2 text-sm border-b whitespace-nowrap
-                    ${idx === 0 ? "sticky left-0 bg-white z-10 shadow-md font-medium" : ""}
+                    ${idx === 0 ? "sticky left-0 bg-gray-100 z-10 shadow-md font-medium" : ""}
                   `}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

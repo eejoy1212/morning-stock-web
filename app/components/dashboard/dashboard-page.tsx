@@ -97,7 +97,7 @@ const fetchNews=async()=>{
   console.log("뉴스들 >>>", res)
 }
  const fetchData = async () => {
-    const res = await fetchSectors()
+    const res = await fetchSectors(1, 100)
     console.log("sectors>>>", res)
      const savedSectors = res.sectors;
   if (savedSectors) {
@@ -509,7 +509,7 @@ const navigationGroups = [
             
 
               {/* 커스텀 섹터 관리 */}
-              <CustomSectorManager customSectors={customSectors} setCustomSectors={setCustomSectors} fetchData={fetchData} />
+              <CustomSectorManager customSectors={customSectors} setCustomSectors={setCustomSectors}  />
            
 
               </div>

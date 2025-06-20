@@ -21,7 +21,7 @@ import { useEffect, useState } from "react"
 import { fetchStockSearch, StockInfo } from "@/app/domain/stock/api"
 import { useDebounce } from 'use-debounce'; 
 import { se } from "date-fns/locale"
-import { createSector, createSectorFull } from "@/app/domain/sector/api"
+import { createSector, createSectorFull, Sector, updateSector } from "@/app/domain/sector/api"
 
 interface Stock {
   name: string
@@ -32,18 +32,32 @@ interface Stock {
 interface SectorDialogProps {
   isCreating: boolean
   setIsCreating: (val: boolean) => void
-
+editingSector?:Sector|null;
+onOpenChange?: (open: boolean) => void
 }
 
 export default function SectorDialog({
   isCreating,
   setIsCreating,
+  editingSector,
+  onOpenChange
 }: SectorDialogProps) {
 const [query, setQuery] = useState('');
 const [debouncedQuery] = useDebounce(query, 300);
 const [availableStocks, setAvailableStocks] = useState<StockInfo[]>([]);
 const [selectedStocks, setSelectedStocks] = useState<StockInfo[]>([]);
 const [newSectorName, setNewSectorName] = useState("")
+useEffect(() => {
+  console.log("isCreating:", isCreating)
+  console.log("editingSector:", editingSector)
+  if (editingSector) {
+    setNewSectorName(editingSector.name);
+    setSelectedStocks(editingSector.stocks || []);
+  } else {
+    setNewSectorName("");
+    setSelectedStocks([]);
+  }
+}, [editingSector, isCreating]);
 useEffect(() => {
   if (!debouncedQuery) return;
   fetchStockSearch(debouncedQuery).then((res) => {
@@ -75,9 +89,31 @@ const handleCreateSector = async() => {
   console.error("❌ 섹터 생성 실패:", error);
 }
 }
+const handleUpdateSector = async() => {
+  // 수정 로직 구현
+try {
+  const res=await updateSector(
+  editingSector?.id || "",{
+    name: newSectorName || "",
+    stocks: selectedStocks.map((stock) => ({
+      code: stock.code,
+      name: stock.name,
+    })),
+  }
 
+  );
+  console.log("섹터 수정 결과:", res);
+  alert("섹터가 수정되었습니다!")
+  setIsCreating(false);
+  setNewSectorName("");
+  setSelectedStocks([]);
+
+} catch (error) {
+  
+}
+}
   return (
-    <Dialog open={isCreating} onOpenChange={setIsCreating}>
+    <Dialog open={isCreating} onOpenChange={onOpenChange}>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <div>
           <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">
@@ -100,9 +136,9 @@ const handleCreateSector = async() => {
 
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>새 관심 섹터 만들기</DialogTitle>
+          <DialogTitle>{editingSector?"섹터 수정하기":"새 관심 섹터 만들기"}</DialogTitle>
           <DialogDescription>
-            관심 있는 주식을 그룹으로 묶어보세요
+            {editingSector?"섹터를 수정하세요":"관심 있는 주식을 그룹으로 묶어보세요"}
           </DialogDescription>
         </DialogHeader>
 
@@ -165,21 +201,32 @@ const handleCreateSector = async() => {
 
             {/* 선택된 종목 보여주기 */}
             {selectedStocks.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                {selectedStocks.map((ticker) => {
-                  const stock = availableStocks.find((s) => s.code === ticker.code)
-                  console.log("선택된 종목:", ticker)
-                  return (
-                    <div
-                      key={ticker.code}
-                      className="bg-primary/10 text-primary text-sm font-medium px-2 py-1 rounded-md border"
-                    >
-                      {ticker?.name} ({ticker.code})
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+  <div className="mt-2 flex flex-wrap gap-2">
+    {selectedStocks.map((ticker) => {
+      const stock = availableStocks.find((s) => s.code === ticker.code)
+      return (
+        <div
+          key={ticker.code}
+          className="flex items-center bg-primary/10 text-primary text-sm font-medium px-2 py-1 rounded-full border space-x-2"
+        >
+          <span>{ticker.name} ({ticker.code})</span>
+          <button
+            onClick={() =>
+              setSelectedStocks((prev) =>
+                prev.filter((s) => s.code !== ticker.code)
+              )
+            }
+            className="ml-1 text-xs text-primary hover:text-red-500 transition cursor-pointer"
+            aria-label="종목 제거"
+          >
+            ✕
+          </button>
+        </div>
+      );
+    })}
+  </div>
+)}
+
           </div>
         </div>
 
@@ -187,7 +234,15 @@ const handleCreateSector = async() => {
           <Button variant="outline" onClick={() => setIsCreating(false)}>
             취소
           </Button>
-          <Button onClick={handleCreateSector}>섹터 만들기</Button>
+          <Button onClick={()=>{
+             if (editingSector) {
+              handleUpdateSector()
+            } else {
+               handleCreateSector()
+            }
+          }
+           
+           }>섹터 {editingSector?"수정 완료":"만들기"}</Button>
         </div>
       </DialogContent>
     </Dialog>
