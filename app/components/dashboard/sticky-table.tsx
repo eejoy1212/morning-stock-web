@@ -25,8 +25,8 @@ export default function StickyTable({ defaultColumns ,defaultData}: StickyTableP
   })
 
   return (
-    <div className="overflow-auto ">
-      <table className="table-auto min-w-[600px] w-full border-collapse">
+    <div className="overflow-auto rounded-[8px]">
+      <table className="table-auto min-w-[600px] w-full border-collapse " >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="bg-gray-100">

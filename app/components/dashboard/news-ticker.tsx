@@ -35,9 +35,7 @@ console.log(visibleArticles)
     <Card className="border-none gap-[8px] flex flex-col">
             <CardTitle className="text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
                             <span className="cursor-pointer">주요 뉴스</span>
-                            {/* <Button size={"icon"} className="bg-transparent hover:bg-transparent"> */}
                             <ChevronRight className="text-black cursor-pointer" />
-                            {/* </Button> */}
                           </CardTitle>  
                           
                           

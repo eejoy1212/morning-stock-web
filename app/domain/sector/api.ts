@@ -38,10 +38,10 @@ export interface GetSectorsResponse {
   limit: number
   sectors: Sector[]
 }
-export async function fetchSectors(page:number,limit:number): Promise<GetSectorsResponse> {
+export async function fetchSectors(search:string,page:number,limit:number): Promise<GetSectorsResponse> {
 
   const response = await axiosInstance.get<GetSectorsResponse>("/sector", {
-  params: { page, limit }
+  params: {q:search, page, limit }
 })
 
   return response.data

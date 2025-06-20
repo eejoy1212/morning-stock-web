@@ -22,6 +22,7 @@ import { fetchStockSearch, StockInfo } from "@/app/domain/stock/api"
 import { useDebounce } from 'use-debounce'; 
 import { se } from "date-fns/locale"
 import { createSector, createSectorFull, Sector, updateSector } from "@/app/domain/sector/api"
+import { CardTitle } from "../ui/card"
 
 interface Stock {
   name: string
@@ -115,14 +116,7 @@ try {
   return (
     <Dialog open={isCreating} onOpenChange={onOpenChange}>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-        <div>
-          <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">
-            사용자 정의 섹터
-          </h2>
-          <p className="text-base lg:text-lg text-gray-700">
-            나만의 섹터를 만들고 관리하세요
-          </p>
-        </div>
+        
         <DialogTrigger asChild>
           <Button
             onClick={() => setIsCreating(true)}

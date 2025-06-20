@@ -31,8 +31,9 @@ import SectorDialog from "./sector-dialog"
 import { deleteSector, fetchSectors, Sector } from "@/app/domain/sector/api"
 import { addStockToSector, deleteStock } from "@/app/domain/stock/api"
 import { Button } from "../ui/button"
-import { Card, CardContent } from "../ui/card"
+import { Card, CardContent, CardTitle } from "../ui/card"
 import { set } from "date-fns"
+import { se } from "date-fns/locale"
 
 
 interface CustomSector {
@@ -56,6 +57,8 @@ const [isCreating, setIsCreating] = useState(false)
 const [totalCount, setTotalCount] = useState(0)
 const [selectedStocks, setSelectedStocks] = useState<string[]>([])
 const [editingSector, setEditingSector] = useState<Sector | null>(null)
+const [searchQuery, setSearchQuery] = useState("")
+const [searchTerm, setSearchTerm] = useState("")
 useEffect(()=>{
   const res=    localStorage.getItem("jwt_token")??""
   setToken(res);
@@ -105,7 +108,7 @@ useEffect(()=>{
     const res=await deleteSector(sectorId)
  if (res.success) {
   alert("섹터 삭제 성공!")
-  fetchSectors(page, itemsPerPage).then((res) => {
+  fetchSectors(searchTerm, page, itemsPerPage).then((res) => {
     console.log("fetch sectors after delete", res)
     setData(res.sectors)
     setTotalCount(res.total)
@@ -188,7 +191,7 @@ const [data,setData]=useState<Sector[]>([])
 //   // 필요시 추가
 // ]
 const getDatas=async()=>{
-  const res=await fetchSectors(page, itemsPerPage)
+  const res=await fetchSectors(searchTerm, page, itemsPerPage)
   console.log("fetch sectors",res)
   setData(res.sectors);
   setTotalCount(res.total)
@@ -196,7 +199,7 @@ const getDatas=async()=>{
 }
 useEffect(() => {
 getDatas()
-},[page,editingSector,isCreating])
+},[page,editingSector,isCreating,searchTerm])
 
 const customData=data.map(d=>{return {
   id: d.id,
@@ -204,7 +207,17 @@ const customData=data.map(d=>{return {
   stockCount: d.stocks ? d.stocks.length : 0,
   stocks: d.stocks
 }})
-
+const handleSearch = ()=>{
+  setSearchTerm(searchQuery)
+  setPage(1)
+  getDatas()
+}
+const handleInit=async()=>{
+  setSearchQuery("")
+  setSearchTerm("")
+  setPage(1)
+ await getDatas()
+}
 if(!token){
   return <Card className="border shadow-md bg-gray-50">
         <CardContent className="flex flex-col items-center justify-center py-12 lg:py-16">
@@ -215,20 +228,6 @@ if(!token){
       </Card>
 }
 
-if (customSectors.length === 0) {
-    return (
-      <Card className="border shadow-md bg-gray-50">
-        <CardContent className="flex flex-col items-center justify-center py-12 lg:py-16">
-          <Building2 className="h-12 w-12 lg:h-16 lg:w-16 text-gray-400 mb-5 lg:mb-6" />
-          <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-3 lg:mb-4">아직 생성된 섹터가 없습니다</h3>
-          <p className="text-base lg:text-lg text-gray-700 text-center max-w-2xl px-4">
-            "새 섹터 만들기" 버튼을 클릭하여 첫 번째 커스텀 섹터를 만들어보세요. 엔터주, 로봇주, 배터리주 등 관심 있는
-            테마로 종목을 그룹화할 수 있습니다.
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
 //     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
@@ -338,7 +337,13 @@ if (customSectors.length === 0) {
 //       ))}
 //     </div>
 <Card  className="border-none">
-<SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating} onOpenChange={
+  <div>
+               <CardTitle className="text-lg lg:text-xl font-bold flex flex-row items-center gap-[20px] mb-[16px]">
+                            <span className="cursor-pointer">사용자 정의 섹터</span>
+                          </CardTitle>  
+         
+        </div>
+  <div className="flex justify-between items-center mb-4"><SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating} onOpenChange={
 (setOpen: boolean) => {
     setIsCreating(setOpen)
     if (!setOpen) {
@@ -347,6 +352,24 @@ if (customSectors.length === 0) {
   }
 
 }   editingSector={editingSector}  />
+<div className="flex items-center gap-2 w-full max-w-md">
+  <Input
+    placeholder="섹터명, 종목명, 종목코드 검색"
+    className="flex-1"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+  />
+  <Button onClick={handleSearch} className="shrink-0 bg-primary/90">
+    검색
+  </Button>
+    <Button variant={"outline"} onClick={handleInit} className="shrink-0">
+    초기화
+  </Button>
+</div>
+
+</div>
+
+
 
    <div className="mt-[16px]">
       <StickyTable defaultColumns={defaultColumns} defaultData={customData}/>
