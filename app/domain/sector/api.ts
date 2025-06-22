@@ -46,6 +46,14 @@ export async function fetchSectors(search:string,page:number,limit:number): Prom
 
   return response.data
 }
+export async function fetchSectorsNameOnly(search:string): Promise<GetSectorsResponse> {
+
+  const response = await axiosInstance.get<GetSectorsResponse>("/sector/name-only", {
+  params: {q:search }
+})
+
+  return response.data
+}
 
 export async function deleteSector(sectorId: string): Promise<{ success: boolean }> {
   try {

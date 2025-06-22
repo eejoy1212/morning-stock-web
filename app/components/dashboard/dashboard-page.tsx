@@ -62,7 +62,7 @@ export default function DashboardPage({ isAuthenticated, onLoginRequired, onLogo
   const [selectedSector, setSelectedSector] = useState("all")
   const [customSectors, setCustomSectors] = useState<Sector[]>([])
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [generatedData, setGeneratedData] = useState<SectorPriceData[]>([])
+
   const [activeTab, setActiveTab] = useState("overview")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 const [news,setNews]=useState<NewsArticle[]>([]);
@@ -190,59 +190,6 @@ window.location.reload();
      { id: "globe", label: "외국인 매수 TOP 20", icon: Globe },
      { id: "activity", label: "오늘의 거래대금 TOP 20", icon: Activity },
   ]
- function transformSectorDataToTableFormat(
-  sectorData: SectorPriceData[]
-): { groups: Group[]; dates: string[]; rows: DailyRow[] } {
-  const dateSet = new Set<string>()
-  const stockToGroup: { [stock: string]: string } = {}
-  const allPrices: Map<string, { [stock: string]: number }> = new Map()
-
-  for (const sector of sectorData) {
-    for (const stock of sector.stocks) {
-      const dateKey = stock.date.slice(0, 10) // 'YYYY-MM-DD'
-      dateSet.add(dateKey)
-
-      stockToGroup[stock.name] = sector.sectorName
-
-      if (!allPrices.has(dateKey)) allPrices.set(dateKey, {})
-      allPrices.get(dateKey)![stock.name] = stock.close
-    }
-  }
-
-  const dates = Array.from(dateSet).sort()
-  const allStockNames = Object.keys(stockToGroup)
-
-  // 그룹 생성
-  const groupMap: { [groupName: string]: string[] } = {}
-  for (const stock of allStockNames) {
-    const group = stockToGroup[stock]
-    if (!groupMap[group]) groupMap[group] = []
-    if (!groupMap[group].includes(stock)) {
-      groupMap[group].push(stock)
-    }
-  }
-
-  const groups: Group[] = Object.entries(groupMap).map(([name, stocks]) => ({
-    name,
-    stocks,
-  }))
-
-  const rows: DailyRow[] = dates.map(date => ({
-    date,
-    prices: allStockNames.reduce((acc, stock) => {
-      acc[stock] = allPrices.get(date)?.[stock] ?? "-"
-      return acc
-    }, {} as { [stock: string]: number | string })
-  }))
-
-  return {
-    groups,
-    dates,
-    rows,
-  }
-}
-
-const { groups, dates, rows } = transformSectorDataToTableFormat(generatedData)
 const navigationGroups = [
   {
     title: "대시보드",
@@ -521,10 +468,7 @@ const navigationGroups = [
 
               {/* 데이터 생성 섹션 */}
           <DataControlPanel/>
-<div className="w-full border-t my-[50px]"/>
-              {/* 생성된 데이터 테이블 */}
-              {/* {generatedData && <DataTable data={generatedData} />} */}
-              <CustomDataTable groups={groups} dates={dates} rows={rows}/>
+
             </div>
           )}
         </div>
