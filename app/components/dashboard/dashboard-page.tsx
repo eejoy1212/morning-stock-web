@@ -44,6 +44,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { TopStocksTable } from "../top-stocks-table"
 import { CustomSectorManager } from "./custom-sector-manager"
 import { CreateSectorModal } from "../modals/create-sector-modal"
+import MarketCapTable from "./market-cap-table"
+import MarketCapPage from "./market-cap-page"
 
 
 interface CustomSector {
@@ -97,7 +99,7 @@ const fetchNews=async()=>{
   console.log("뉴스들 >>>", res)
 }
  const fetchData = async () => {
-    const res = await fetchSectors(1, 100)
+    const res = await fetchSectors("",1, 100)
     console.log("sectors>>>", res)
      const savedSectors = res.sectors;
   if (savedSectors) {
@@ -146,7 +148,6 @@ window.location.reload();
       return
     }
     const res=await fetchSectorPrices()
-    setGeneratedData(res)
     console.log(res)
   }
 
@@ -156,14 +157,12 @@ window.location.reload();
       return
     }
 
-    if (!generatedData) return
 
     // toast({
     //   title: "엑셀 다운로드",
     //   description: "엑셀 파일 다운로드가 시작됩니다.",
     // })
 
-    console.log("Excel download triggered with data:", generatedData)
   }
 
   const sectors = [
@@ -185,7 +184,7 @@ window.location.reload();
     { id: "sectors", label: "섹터 관리", icon: Building2 },
     { id: "analysis", label: "데이터 분석", icon: BarChart3 },
     { id: "today", label: "오늘의 급등 종목 TOP 20", icon: TrendingUp },
-    { id: "all", label: "시가총액 TOP 50", icon: CircleDollarSign },
+    { id: "market-cap", label: "시가총액 TOP 50", icon: CircleDollarSign },
     { id: "bank", label: "기관매수 TOP 20", icon: Banknote },
      { id: "globe", label: "외국인 매수 TOP 20", icon: Globe },
      { id: "activity", label: "오늘의 거래대금 TOP 20", icon: Activity },
@@ -203,7 +202,7 @@ const navigationGroups = [
     title: "TOP 랭킹",
     items: [
       { id: "today", label: "오늘의 급등 종목 TOP 20", icon: TrendingUp },
-      { id: "all", label: "시가총액 TOP 50", icon: CircleDollarSign },
+      { id: "market-cap", label: "시가총액 TOP 50", icon: CircleDollarSign },
       { id: "bank", label: "기관매수 TOP 20", icon: Banknote },
       { id: "globe", label: "외국인 매수 TOP 20", icon: Globe },
       { id: "activity", label: "오늘의 거래대금 TOP 20", icon: Activity },
@@ -307,7 +306,7 @@ const navigationGroups = [
       </div>
     </div>
   )
-
+console.log("activeTab >>>", activeTab)
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* 데스크톱 사이드바 */}
@@ -470,6 +469,9 @@ const navigationGroups = [
           <DataControlPanel/>
 
             </div>
+          )}
+          {activeTab === "market-cap" && (
+            <MarketCapPage/>
           )}
         </div>
       </main>
