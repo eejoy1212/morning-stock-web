@@ -24,6 +24,7 @@ import {
   Banknote,
   Globe,
   Activity,
+  Lock,
 } from "lucide-react"
 
 
@@ -48,6 +49,7 @@ import MarketCapTable from "./market-cap-table"
 import MarketCapPage from "./market-cap-page"
 import GainerPage from "./gainer-page"
 import TopTradeAmountPage from "./top-trade-amount-page"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 
 interface CustomSector {
@@ -232,7 +234,35 @@ const navigationGroups = [
               </p>
               <div className="space-y-1">
                 {group.items.map((item) => (
-                  <Button
+           item.id==="sectors"||item.id==="analysis"?    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div>
+            <Button
+                    key={item.id}
+                    disabled={!isAuthenticated}
+                    variant={activeTab === item.id ? "default" : "ghost"}
+                    className={`w-full justify-start text-sm lg:text-[15px] font-medium h-10 rounded-md transition ${
+                      activeTab === item.id
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                    onClick={() => {
+                      setActiveTab(item.id)
+                      setIsMobileMenuOpen(false)
+                    }}
+                  >
+                    <item.icon className="mr-3 h-4 w-4" />
+                    {item.label}
+                {!isAuthenticated && <Lock className="mr-3 h-4 w-4" />}
+                  </Button>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          로그인해야 사용 가능합니다.
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>:   <Button
                     key={item.id}
                     variant={activeTab === item.id ? "default" : "ghost"}
                     className={`w-full justify-start text-sm lg:text-[15px] font-medium h-10 rounded-md transition ${
@@ -247,8 +277,10 @@ const navigationGroups = [
                   >
                     <item.icon className="mr-3 h-4 w-4" />
                     {item.label}
+       
                   </Button>
                 ))}
+                 
               </div>
             </div>
           ))}
