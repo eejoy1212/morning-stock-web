@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import MarketCapTable, { MarketCapRow } from './market-cap-table';
-import { fetchMarketCapList, MarketCapItem, MarketType } from '@/app/domain/kis/api';
+import { fetchMarketCapList, fetchTopGainers, MarketCapItem, MarketType } from '@/app/domain/kis/api';
 import { ColumnDef } from '@tanstack/react-table';
 
-const MarketCapPage = () => {
+const GainerPage = () => {
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
   const [date, setDate] = useState<string>(formattedDate);
@@ -55,15 +55,13 @@ const columns: ColumnDef<MarketCapRow>[] = [
 ];
   const fetchData = async () => {
     try {
-      const res = await fetchMarketCapList({
+      const res = await fetchTopGainers(
         date,
         market,
-        page,
-        pageSize,
-      });
-      console.log('📈 시가총액 데이터:', res);
-      setData(res.data);
-      setTotalPages(res.totalPages);
+      );
+      console.log('📈 급등종목 데이터:', res);
+      setData(res);
+    //   setTotalPages(res.totalPages);
     } catch (error) {
       console.error('Error fetching market cap data:', error);
     }
@@ -110,4 +108,4 @@ const columns: ColumnDef<MarketCapRow>[] = [
   );
 };
 
-export default MarketCapPage;
+export default GainerPage;

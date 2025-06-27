@@ -46,6 +46,8 @@ import { CustomSectorManager } from "./custom-sector-manager"
 import { CreateSectorModal } from "../modals/create-sector-modal"
 import MarketCapTable from "./market-cap-table"
 import MarketCapPage from "./market-cap-page"
+import GainerPage from "./gainer-page"
+import TopTradeAmountPage from "./top-trade-amount-page"
 
 
 interface CustomSector {
@@ -178,17 +180,7 @@ window.location.reload();
 
   };
 
-  const navigationItems = [
-    { id: "overview", label: "시장 개요", icon: Home },
-    // { id: "sectors-make", label: "섹터 만들기", icon: PlusSquare },
-    { id: "sectors", label: "섹터 관리", icon: Building2 },
-    { id: "analysis", label: "데이터 분석", icon: BarChart3 },
-    { id: "today", label: "오늘의 급등 종목 TOP 20", icon: TrendingUp },
-    { id: "market-cap", label: "시가총액 TOP 50", icon: CircleDollarSign },
-    { id: "bank", label: "기관매수 TOP 20", icon: Banknote },
-     { id: "globe", label: "외국인 매수 TOP 20", icon: Globe },
-     { id: "activity", label: "오늘의 거래대금 TOP 20", icon: Activity },
-  ]
+
 const navigationGroups = [
   {
     title: "대시보드",
@@ -201,11 +193,11 @@ const navigationGroups = [
   {
     title: "TOP 랭킹",
     items: [
-      { id: "today", label: "오늘의 급등 종목 TOP 20", icon: TrendingUp },
+      { id: "gainer", label: "오늘의 급등 종목 TOP 20", icon: TrendingUp },
       { id: "market-cap", label: "시가총액 TOP 50", icon: CircleDollarSign },
       { id: "bank", label: "기관매수 TOP 20", icon: Banknote },
       { id: "globe", label: "외국인 매수 TOP 20", icon: Globe },
-      { id: "activity", label: "오늘의 거래대금 TOP 20", icon: Activity },
+      { id: "trade-amount", label: "오늘의 거래대금 TOP 20", icon: Activity },
     ],
   },
 ]
@@ -472,6 +464,12 @@ console.log("activeTab >>>", activeTab)
           )}
           {activeTab === "market-cap" && (
             <MarketCapPage/>
+          )}
+           {activeTab === "gainer" && (
+            <GainerPage/>
+          )}
+              {activeTab === "trade-amount" && (
+            <TopTradeAmountPage/>
           )}
         </div>
       </main>
