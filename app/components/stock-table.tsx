@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowUp } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 
 // 급등 종목 데이터
 const topStocks = [

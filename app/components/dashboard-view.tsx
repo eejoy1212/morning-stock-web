@@ -4,26 +4,18 @@ import { useState } from "react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { BarChart, Bell, ChevronDown, CirclePlus, Home, LineChart, Menu, PieChart, Settings, User } from "lucide-react"
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
+import { Button } from "./ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { Badge } from "./ui/badge"
+import { StockTable } from "./stock-table"
+import { SectorPerformanceChart } from "./sector-performance-chart"
+import { SectorTrendChart } from "./sector-trend-chart"
+import { CustomSectorManager } from "./custom-sector-manager"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { SectorTrendChart } from "@/components/sector-trend-chart"
-import { StockTable } from "@/components/stock-table"
-import { SectorPerformanceChart } from "@/components/sector-performance-chart"
-import { CustomSectorManager } from "@/components/custom-sector-manager"
 
 const sectors = [
   { name: "기술", id: "tech" },
@@ -114,7 +106,7 @@ export default function DashboardView() {
       </header>
       <div className="grid flex-1 md:grid-cols-[240px_1fr]">
         <aside className="hidden border-r bg-muted/40 md:block">
-          <ScrollArea className="h-full">
+          {/* <ScrollArea className="h-full"> */}
             <div className="flex flex-col gap-4 p-4">
               <div>
                 <h3 className="mb-2 px-4 text-sm font-medium">시장 섹터</h3>
@@ -153,7 +145,7 @@ export default function DashboardView() {
                 </div>
               </div>
             </div>
-          </ScrollArea>
+          {/* </ScrollArea> */}
         </aside>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center gap-4">

@@ -1,7 +1,7 @@
 "use client"
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Cell } from "recharts"
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
+import { ChartContainer, ChartTooltip } from "../components/ui/chart"
 
 // 섹터 성과 데이터 (월간 수익률 %)
 const sectorPerformanceData = [

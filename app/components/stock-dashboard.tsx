@@ -5,9 +5,9 @@ import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { BarChart3, Calendar, ChevronDown, TrendingUp } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "../components/ui/badge"
+import { Button } from "../components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,10 +15,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "../components/ui/dropdown-menu"
 
-import { SectorPerformanceChart } from "@/components/sector-performance-chart"
-import { TopStocksTable } from "@/components/top-stocks-table"
+import { SectorPerformanceChart } from "../components/sector-performance-chart"
+import { TopStocksTable } from "../components/top-stocks-table"
 
 const sectors = [
   { name: "전체 섹터", id: "all" },

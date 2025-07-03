@@ -1,7 +1,7 @@
 "use client"
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
+import { ChartContainer, ChartTooltipContent } from "../components/ui/chart"
 
 // 섹터 추세 데이터
 const sectorData = {

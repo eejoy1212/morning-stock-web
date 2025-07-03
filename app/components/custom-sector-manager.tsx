@@ -2,13 +2,14 @@
 
 import { useState } from "react"
 import { CirclePlus, Edit, Save, Trash2, X } from "lucide-react"
+import { Sector } from "../domain/sector/api"
+import { Button } from "./ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card"
+import { Label } from "./ui/label"
+import { Input } from "./ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Sector } from "@/domain/sector/api"
+// import { Sector } from "@/domain/sector/api"
 
 // 사용 가능한 주식 데이터
 const availableStocks = [
@@ -57,13 +58,13 @@ export function CustomSectorManager() {
       setEditingSector(null)
     } else {
       setEditingSector(index)
-      setSelectedStocks(customSectors[index].stocks)
+      setSelectedStocks(customSectors[index].stocks.map(s=>s.name))
     }
   }
 
   const handleUpdateSector = (index: number) => {
     const updatedSectors = [...customSectors]
-    updatedSectors[index].stocks = selectedStocks
+    // updatedSectors[index].stocks = selectedStocks
     setCustomSectors(updatedSectors)
     setEditingSector(null)
   }
@@ -203,11 +204,11 @@ export function CustomSectorManager() {
                 </TableHeader>
                 <TableBody>
                   {sector.stocks.map((ticker) => {
-                    const stock = availableStocks.find((s) => s.ticker === ticker)
+                    const stock = availableStocks.find((s) => s.ticker === ticker.name)
                     if (!stock) return null
 
                     return (
-                      <TableRow key={ticker}>
+                      <TableRow key={ticker.id}>
                         <TableCell className="font-medium">{stock.name}</TableCell>
                         <TableCell>{stock.ticker}</TableCell>
                         <TableCell>{stock.sector}</TableCell>

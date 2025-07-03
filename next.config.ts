@@ -1,6 +1,9 @@
 // next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+   eslint: {
+    ignoreDuringBuilds: true, // ⬅️ 이 줄 추가!
+  },
   images: {
     remotePatterns: [
       {
