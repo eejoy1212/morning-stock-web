@@ -29,6 +29,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
   const [email, setEmail] = useState("")
   // const { toast } = useToast()
 
+const handleKakaoLogin = () => {
+  const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY!;
+  const REDIRECT_URI = `${window.location.origin}/auth/kakao/callback`;
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  window.location.href = kakaoAuthUrl;
+};
 
 const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault()
@@ -159,13 +165,21 @@ setEmail(loginForm.email)
                       </Button>
                     </div>
                   </div>
-                  <Button
-                    type="submit"
-                    className="w-full h-9 lg:h-10 text-sm lg:text-base font-semibold"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "로그인 중..." : "로그인"}
-                  </Button>
+                 <Button
+  type="submit"
+  className="w-full h-9 lg:h-10 text-sm lg:text-base font-semibold"
+  disabled={isLoading}
+>
+  {isLoading ? "로그인 중..." : "로그인"}
+</Button>
+
+<Button
+  type="button"
+  onClick={handleKakaoLogin}
+  className="w-full h-9 lg:h-10 text-sm lg:text-base font-semibold bg-yellow-300 text-black hover:bg-yellow-400"
+>
+  카카오로 로그인
+</Button>
                 </form>
               </CardContent>
             </Card>

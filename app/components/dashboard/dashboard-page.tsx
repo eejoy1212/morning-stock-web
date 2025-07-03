@@ -50,6 +50,7 @@ import MarketCapPage from "./market-cap-page"
 import GainerPage from "./gainer-page"
 import TopTradeAmountPage from "./top-trade-amount-page"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 
 
 interface CustomSector {
@@ -72,7 +73,10 @@ export default function DashboardPage({ isAuthenticated, onLoginRequired, onLogo
   const [activeTab, setActiveTab] = useState("overview")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 const [news,setNews]=useState<NewsArticle[]>([]);
+const [sectorNames,setSectorNames]=useState<string[]>([])
   const [monthylSectors, setMonthlySectors] = useState<MonthlyTopSector[]>([])
+  // 시장개요 화면 변수
+  const [isOverviewLoading, setIsOverviewLoading] = useState(true)
 const fetchMonthlyData=async()=>{
   const res=await  fetchMonthlyTopSectors();
   setMonthlySectors(res)
@@ -100,9 +104,11 @@ useEffect(() => {
 const fetchNews=async()=>{
   const res=await fetchSectorNews()
   setNews(res.articles)
-  console.log("뉴스들 >>>", res)
+  setSectorNames(res.sectorNames)
+  setIsOverviewLoading(false)
 }
  const fetchData = async () => {
+
     const res = await fetchSectors("",1, 100)
     console.log("sectors>>>", res)
      const savedSectors = res.sectors;
@@ -111,7 +117,7 @@ const fetchNews=async()=>{
   }
   }
 useEffect(() => {
- 
+ if (!isAuthenticated) return;
   fetchData()
 }, [showCreateModal])
 
@@ -234,7 +240,7 @@ const navigationGroups = [
               </p>
               <div className="space-y-1">
                 {group.items.map((item) => (
-           item.id==="sectors"||item.id==="analysis"?    <TooltipProvider>
+           item.id==="sectors"||item.id==="analysis"?<TooltipProvider key={item.id}>
       <Tooltip>
         <TooltipTrigger asChild>
           <div>
@@ -258,11 +264,41 @@ const navigationGroups = [
                   </Button>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side="right" className={cn(isAuthenticated?"opacity-0":"opacity-100")}>
           로그인해야 사용 가능합니다.
         </TooltipContent>
       </Tooltip>
-    </TooltipProvider>:   <Button
+    </TooltipProvider>:  item.id==="bank"||item.id==="globe"?    <TooltipProvider key={item.id}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div>
+            <Button
+                    key={item.id}
+                    disabled={true}
+                    variant={activeTab === item.id ? "default" : "ghost"}
+                    className={`w-full justify-start text-sm lg:text-[15px] font-medium h-10 rounded-md transition ${
+                      activeTab === item.id
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                    onClick={() => {
+                      setActiveTab(item.id)
+                      setIsMobileMenuOpen(false)
+                    }}
+                  >
+                    <item.icon className="mr-3 h-4 w-4" />
+                    {item.label}
+              {/* <Lock className="mr-3 h-4 w-4" /> */}
+              
+              <span className="ml-[8px]">🚧 </span>
+                  </Button>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          준비중 입니다.
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>: <Button
                     key={item.id}
                     variant={activeTab === item.id ? "default" : "ghost"}
                     className={`w-full justify-start text-sm lg:text-[15px] font-medium h-10 rounded-md transition ${
@@ -330,7 +366,7 @@ const navigationGroups = [
       </div>
     </div>
   )
-console.log("activeTab >>>", activeTab)
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* 데스크톱 사이드바 */}
@@ -362,11 +398,11 @@ console.log("activeTab >>>", activeTab)
           {activeTab === "overview" && (
             <div className=" flex flex-col gap-[16px] h-full ">
         
-     <div className="w-full mb-[50px]">
-      <NewsTicker articles={news}/>
+     <div className={cn("w-full",isAuthenticated&&" mb-[50px]")}>
+      <NewsTicker articles={news} sectorNames={sectorNames} isAuthenticated={isAuthenticated} isLoading={isOverviewLoading}/>
      </div>
-     <div className="flex flex-row"></div>
-      <Card className="border-none w-full flex flex-col gap-[8px]">
+
+     {isAuthenticated&& <Card className="border-none w-full flex flex-col gap-[8px]">
                           <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
                             <span>이번 달 가장 많이 오른 섹터</span>
                             <ChevronRight className="text-black cursor-pointer" />
@@ -378,7 +414,7 @@ console.log("activeTab >>>", activeTab)
                           <StockLineChart/>
                       </div>
                     </CardContent>
-                  </Card>
+                  </Card>}
                 
    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
   {/* 오늘의 급등종목 */}

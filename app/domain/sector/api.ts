@@ -75,6 +75,7 @@ export interface SectorNewsArticle {
 export interface FetchSectorNewsResponse {
   success: boolean
   articles: SectorNewsArticle[]
+  sectorNames:string[]
 }
 
 export async function fetchSectorNews(): Promise<FetchSectorNewsResponse> {
