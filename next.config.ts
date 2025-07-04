@@ -1,6 +1,7 @@
 // next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  
    eslint: {
     ignoreDuringBuilds: true, // ⬅️ 이 줄 추가!
   },
@@ -12,6 +13,7 @@ const nextConfig = {
       },
     ],
   },
+  
   // 기타 설정
 }
 

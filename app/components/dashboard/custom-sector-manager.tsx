@@ -343,7 +343,8 @@ if(!token){
                           </CardTitle>  
          
         </div>
-  <div className="flex justify-between items-center mb-4"><SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating} onOpenChange={
+  <div className="flex flex-col md:flex-row justify-between items-center md:items-start mb-4 ">
+    <div className="self-start md:mb-0 mb-[16px]"> <SectorDialog  isCreating={isCreating} setIsCreating={setIsCreating} onOpenChange={
 (setOpen: boolean) => {
     setIsCreating(setOpen)
     if (!setOpen) {
@@ -351,7 +352,8 @@ if(!token){
     }
   }
 
-}   editingSector={editingSector}  />
+}   editingSector={editingSector}  /></div>
+   
 <div className="flex items-center gap-2 w-full max-w-md">
   <Input
     placeholder="섹터명, 종목명, 종목코드 검색"

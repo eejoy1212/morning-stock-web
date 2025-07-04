@@ -106,6 +106,7 @@ function exportToExcelWithGroupedHeader(
   const blob = new Blob([buffer], { type: 'application/octet-stream' });
   saveAs(blob, fileName);
 }
+console.log("data : ",data)
   return (
     <Card className="border-none gap-[8px] flex flex-col">
       <div className="flex flex-row justify-start gap-[20px]">
@@ -123,7 +124,11 @@ function exportToExcelWithGroupedHeader(
        
       <CardContent className="overflow-x-auto">
         <div className="w-full">
-          <SectorGainTable data={data} columns={columns}/>
+          {Array.isArray(data) && data.length > 0 ? (
+            <SectorGainTable data={data} columns={columns} />
+          ) : (
+            <span className="w-full flex items-center justify-center mt-[16px]">데이터가 없습니다.</span>
+          )}
 
 
         </div>

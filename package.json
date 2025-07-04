@@ -24,6 +24,7 @@
     "file-saver": "^2.0.5",
     "googleapis": "^150.0.1",
     "jsdom": "^26.1.0",
+    "lightweight-charts": "^4.1.0",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.517.0",
     "next": "15.3.4",

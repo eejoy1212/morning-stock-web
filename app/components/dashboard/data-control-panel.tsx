@@ -304,10 +304,10 @@ setData(res)
       </div>
 
 
-      <CardContent className="space-y-6">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <CardContent className="space-y-6 w-full">
+        <div className="flex flex-col lg:flex-row gap-6 w-full">
           {/* 섹터 선택 */}
-          <div className="flex-1 space-y-3">
+          <div className="w-full space-y-3">
             <h3 className="text-sm lg:text-base font-bold text-gray-900">1. 섹터 선택</h3>
             <div className="rounded-md border bg-white shadow-sm">
              <Command>
@@ -409,22 +409,25 @@ setData(res)
 
 
           {/* 날짜 선택 */}
-          <div className="flex-1 space-y-3">
-            <h3 className="text-sm lg:text-base font-bold text-gray-900">2. 날짜 범위 선택</h3>
-            <div className="flex items-center gap-2">
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              <span className="mx-2">~</span>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-          </div> 
+         <div className="w-full space-y-3">
+  <h3 className="text-sm lg:text-base font-bold text-gray-900">2. 날짜 범위 선택</h3>
+  <div className="flex items-center  w-full">
+    <Input
+      type="date"
+      value={startDate}
+      onChange={(e) => setStartDate(e.target.value)}
+      className="w-[calc(50%-8px)]"
+    />
+    <span className="w-[16px] flex items-center justify-center">~</span>
+    <Input
+      type="date"
+      value={endDate}
+      onChange={(e) => setEndDate(e.target.value)}
+      className="w-[calc(50%-8px)]"
+    />
+  </div>
+</div>
+
         </div>
          
 

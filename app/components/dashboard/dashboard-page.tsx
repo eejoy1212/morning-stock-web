@@ -35,7 +35,7 @@ import NewsTicker, { NewsArticle } from "./news-ticker"
 import StockLineChart from "./stock-line-chart"
 import { DataControlPanel } from "./data-control-panel"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { fetchMonthlyTopSectors, fetchSectorNews, fetchSectors, MonthlyTopSector, Sector } from "@/app/domain/sector/api"
+import { Candle, fetchMonthlyTopSectors, fetchSectorNews, fetchSectors, fetchSectorTrend, MonthlyTopSector, Sector, } from "@/app/domain/sector/api"
 import { fetchSectorPrices, SectorPriceData } from "@/app/domain/daily-price/api"
 import { logoutUser } from "@/app/domain/user/api"
 import { Button } from "../ui/button"
@@ -51,6 +51,7 @@ import GainerPage from "./gainer-page"
 import TopTradeAmountPage from "./top-trade-amount-page"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import CandlestickChart from "./candle-stick-cahrt"
 
 
 interface CustomSector {
@@ -77,6 +78,24 @@ const [sectorNames,setSectorNames]=useState<string[]>([])
   const [monthylSectors, setMonthlySectors] = useState<MonthlyTopSector[]>([])
   // 시장개요 화면 변수
   const [isOverviewLoading, setIsOverviewLoading] = useState(true)
+     const [data, setData] = useState<Candle[]>([])
+  const [sectorName, setSectorName] = useState('')
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await fetchSectorTrend()
+        console.log(res)
+        setData(res.candles)
+        setSectorName(res.sectorName)
+        
+      } catch (err) {
+        console.error('차트 데이터 로드 실패:', err)
+      }
+    }
+
+    loadData()
+  }, [])
 const fetchMonthlyData=async()=>{
   const res=await  fetchMonthlyTopSectors();
   setMonthlySectors(res)
@@ -187,7 +206,13 @@ window.location.reload();
     const result = await res.json();
 
   };
-
+const sampleData = [
+  { time: "2025-06-30", open: 59000, high: 61000, low: 58000, close: 60500 },
+  { time: "2025-07-01", open: 60500, high: 61500, low: 59500, close: 61000 },
+  { time: "2025-07-02", open: 61000, high: 63000, low: 60500, close: 62700 },
+  { time: "2025-07-03", open: 62700, high: 64000, low: 62000, close: 63500 },
+  { time: "2025-07-04", open: 63500, high: 64700, low: 63000, close: 63300 },
+]
 
 const navigationGroups = [
   {
@@ -393,7 +418,7 @@ const navigationGroups = [
       </Sheet>
 
       {/* 메인 컨텐츠 */}
-      <main className="flex-1 overflow-auto h-100vh bg-white ml-[20px] border-l">
+      <main className="flex-1 overflow-auto h-100vh bg-white md:ml-[20px] border-l">
         <div className="p-4 lg:p-6 pt-16 lg:pt-6 h-full">
           {activeTab === "overview" && (
             <div className=" flex flex-col gap-[16px] h-full ">
@@ -404,14 +429,15 @@ const navigationGroups = [
 
      {isAuthenticated&& <Card className="border-none w-full flex flex-col gap-[8px]">
                           <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
-                            <span>이번 달 가장 많이 오른 섹터</span>
+                            <span>이번 달 가장 많이 오른 섹터는 "{sectorName}"</span>
                             <ChevronRight className="text-black cursor-pointer" />
                           </CardTitle>
               
                     <CardContent className="">
                           <div className="w-full h-full">
                           {/* <SectorPerformanceChart sectors={monthylSectors}/> */}
-                          <StockLineChart/>
+                          {/* <StockLineChart/> */}
+                          <CandlestickChart data={data}/>
                       </div>
                     </CardContent>
                   </Card>}
@@ -422,9 +448,14 @@ const navigationGroups = [
     
     <CardHeader className="pb-3 lg:pb-4">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-            <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
-                            <span>오늘의 급등 종목 TOP 20</span>
-                            <ChevronRight className="text-black cursor-pointer" />
+            <CardTitle className="text-lg lg:text-xl font-bold mb-1 flex flex-row items-center justify-between gap-[20px] w-full">
+                            <span>급등 종목 TOP 5</span>
+                            <div className="flex flex-row items-center cursor-pointer">  
+                              <span className="text-[14px] font-medium">더보기</span>
+                               <ChevronRight className="text-black cursor-pointer w-[20px]" />
+                            </div>
+                           
+                           
                           </CardTitle>
        
       </div>
@@ -438,9 +469,12 @@ const navigationGroups = [
   <Card>
     <CardHeader className="pb-3 lg:pb-4">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-           <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
-                            <span>시가총액 TOP 50</span>
-                            <ChevronRight className="text-black cursor-pointer" />
+           <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row justify-between items-center gap-[20px] w-full">
+                            <span>시가총액 TOP 5</span>
+                             <div className="flex flex-row items-center cursor-pointer">  
+                              <span className="text-[14px] font-medium">더보기</span>
+                               <ChevronRight className="text-black cursor-pointer w-[20px]" />
+                            </div>
                           </CardTitle>
       
       </div>
@@ -454,9 +488,12 @@ const navigationGroups = [
   <Card>
     <CardHeader className="pb-3 lg:pb-4">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-       <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
-                            <span>기관매수 TOP 20</span>
-                            <ChevronRight className="text-black cursor-pointer" />
+       <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row justify-between items-center gap-[20px] w-full">
+                            <span>기관매수 TOP 5</span>
+                          <div className="flex flex-row items-center cursor-pointer">  
+                              <span className="text-[14px] font-medium">더보기</span>
+                               <ChevronRight className="text-black cursor-pointer w-[20px]" />
+                            </div>
                           </CardTitle>
        
       </div>
@@ -470,9 +507,12 @@ const navigationGroups = [
   <Card>
     <CardHeader className="pb-3 lg:pb-4">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-         <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
-                            <span>외국인 매수 TOP 20</span>
-                            <ChevronRight className="text-black cursor-pointer" />
+         <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row justify-between w-full items-center gap-[20px]">
+                            <span>외국인 매수 TOP 5</span>
+                  <div className="flex flex-row items-center cursor-pointer">  
+                              <span className="text-[14px] font-medium">더보기</span>
+                               <ChevronRight className="text-black cursor-pointer w-[20px]" />
+                            </div>
                           </CardTitle>
         
       </div>
@@ -486,9 +526,12 @@ const navigationGroups = [
   <Card>
     <CardHeader className="pb-3 lg:pb-4">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-        <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row items-center gap-[20px]">
-                            <span>오늘의 거래대금 TOP 20</span>
-                            <ChevronRight className="text-black cursor-pointer" />
+        <CardTitle className=" text-lg lg:text-xl font-bold mb-1 flex flex-row justify-between w-full items-center gap-[20px]">
+                            <span>오늘의 거래대금 TOP 5</span>
+                            <div className="flex flex-row items-center cursor-pointer">  
+                              <span className="text-[14px] font-medium">더보기</span>
+                               <ChevronRight className="text-black cursor-pointer w-[20px]" />
+                            </div>
                           </CardTitle>
         
         

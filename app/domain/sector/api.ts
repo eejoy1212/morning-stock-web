@@ -126,3 +126,23 @@ export async function updateSector(id: string, payload: UpdateSectorPayload): Pr
     throw err;
   }
 }
+export interface Candle {
+  time: string // 'YYYY-MM-DD'
+  open: number
+  high: number
+  low: number
+  close: number
+}
+
+export interface SectorTrendResponse {
+  success: boolean
+  sectorName: string
+  candles: Candle[]
+  max: Candle
+  min: Candle
+}
+
+export const fetchSectorTrend = async (): Promise<SectorTrendResponse> => {
+  const res = await axiosInstance.get('/sector/monthly-top-sector-trend')
+  return res.data
+}

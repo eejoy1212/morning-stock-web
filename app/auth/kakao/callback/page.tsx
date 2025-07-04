@@ -1,16 +1,15 @@
-import { useRouter } from "next/router"
+"use client"
+
 import { useEffect } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { kakaoLogin } from "@/app/domain/user/api"
 
 export default function KakaoCallbackPage() {
+  const searchParams = useSearchParams()
   const router = useRouter()
 
   useEffect(() => {
-    if (!router.isReady) return // 라우터 준비되었는지 확인
-
-    const searchParams = new URLSearchParams(window.location.search)
-    const code = searchParams.get("code")
-
+    const code = searchParams?.get("code")
     if (!code) return
 
     const handleKakaoLogin = async () => {
@@ -28,7 +27,7 @@ export default function KakaoCallbackPage() {
     }
 
     handleKakaoLogin()
-  }, [router])
+  }, [searchParams, router])
 
   return <p>로그인 처리 중입니다...</p>
 }

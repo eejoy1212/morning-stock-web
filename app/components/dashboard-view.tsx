@@ -186,7 +186,7 @@ export default function DashboardView() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xl font-medium">오늘의 급등 종목 Top 5</CardTitle>
+                    <CardTitle className="text-xl font-medium">급등 종목 Top 5</CardTitle>
                     <Badge variant="outline">오늘</Badge>
                   </CardHeader>
                   <CardContent>
